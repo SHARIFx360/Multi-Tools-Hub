@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        .calculator-card {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .calculator-header {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .calculator-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .calculator-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .result-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-calculate {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-calculate:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .age-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .age-detail-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .age-detail-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .age-detail-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .calculator-card {
+                margin: 1rem;
+            }
+
+            .calculator-body {
+                padding: 1rem;
+            }
+
+            .result-value {
+                font-size: 1.5rem;
+            }
+
+            .age-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Add error message styles */
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Add input validation styles */
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linecap='round' d='M6 3.75v1.5m0 3h1.5m-1.5 1.5h1.5'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(.375em + .1875rem) center;
+            background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+        }
+
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+        }
+
+        /* Add loading state styles */
+        .btn-calculate.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-calculate.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <main class="container py-5">
+        <div class="calculator-card">
+            <div class="calculator-header">
+                <h2>Age Calculator</h2>
+            </div>
+            <div class="calculator-body">
+                <div class="form-group">
+                    <label class="form-label">Date of Birth</label>
+                    <input type="date" class="form-control" id="birthDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Current Date</label>
+                    <input type="date" class="form-control" id="currentDate">
+                </div>
+                <button class="btn btn-calculate w-100" onclick="calculateAge()">
+                    Calculate Age
+                </button>
+
+                <div class="result-card" id="resultCard">
+                    <h5 class="mb-3">Age Details</h5>
+                    <div class="error-message" id="errorMessage"></div>
+                    <div class="result-value" id="resultValue"></div>
+                    <div class="result-details" id="resultDetails"></div>
+                    <div class="age-details" id="ageDetails">
+                        <div class="age-detail-item">
+                            <div class="age-detail-value" id="yearsValue">0</div>
+                            <div class="age-detail-label">Years</div>
+                        </div>
+                        <div class="age-detail-item">
+                            <div class="age-detail-value" id="monthsValue">0</div>
+                            <div class="age-detail-label">Months</div>
+                        </div>
+                        <div class="age-detail-item">
+                            <div class="age-detail-value" id="daysValue">0</div>
+                            <div class="age-detail-label">Days</div>
+                        </div>
+                        <div class="age-detail-item">
+                            <div class="age-detail-value" id="totalDaysValue">0</div>
+                            <div class="age-detail-label">Total Days</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script>
+        // Track tool usage
+        trackToolUsage('age-calculator');
+
+        // Set current date as default
+        document.getElementById('currentDate').valueAsDate = new Date();
+
+        function validateDate(input, fieldName) {
+            const date = new Date(input.value);
+            if (isNaN(date.getTime())) {
+                showError(`${fieldName} must be a valid date`);
+                input.classList.add('is-invalid');
+                return false;
+            }
+            input.classList.remove('is-invalid');
+            return true;
+        }
+
+        function calculateAge() {
+            const birthDateInput = document.getElementById('birthDate');
+            const currentDateInput = document.getElementById('currentDate');
+            const calculateButton = document.querySelector('.btn-calculate');
+            
+            if (!validateDate(birthDateInput, 'Birth date') || !validateDate(currentDateInput, 'Current date')) {
+                return;
+            }
+
+            const birthDate = new Date(birthDateInput.value);
+            const currentDate = new Date(currentDateInput.value);
+
+            // Add loading state
+            calculateButton.classList.add('loading');
+            calculateButton.disabled = true;
+
+            // Simulate a small delay for better UX
+            setTimeout(() => {
+                if (birthDate > currentDate) {
+                    showError('Birth date cannot be in the future');
+                    removeLoadingState(calculateButton);
+                    return;
+                }
+
+                const age = getAge(birthDate, currentDate);
+                showResult(age);
+                removeLoadingState(calculateButton);
+            }, 500);
+        }
+
+        function getAge(birthDate, currentDate) {
+            let years = currentDate.getFullYear() - birthDate.getFullYear();
+            let months = currentDate.getMonth() - birthDate.getMonth();
+            let days = currentDate.getDate() - birthDate.getDate();
+
+            // Adjust for negative months or days
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, birthDate.getDate());
+                days += Math.floor((currentDate - lastMonth) / (1000 * 60 * 60 * 24));
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Calculate total days
+            const totalDays = Math.floor((currentDate - birthDate) / (1000 * 60 * 60 * 24));
+
+            return {
+                years,
+                months,
+                days,
+                totalDays
+            };
+        }
+
+        function showResult(age) {
+            const resultCard = document.getElementById('resultCard');
+            const resultValue = document.getElementById('resultValue');
+            const resultDetails = document.getElementById('resultDetails');
+            const yearsValue = document.getElementById('yearsValue');
+            const monthsValue = document.getElementById('monthsValue');
+            const daysValue = document.getElementById('daysValue');
+            const totalDaysValue = document.getElementById('totalDaysValue');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Clear any previous errors
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+
+            // Update main result
+            resultValue.textContent = `${age.years} years, ${age.months} months, ${age.days} days`;
+            
+            // Update details
+            yearsValue.textContent = age.years;
+            monthsValue.textContent = age.months;
+            daysValue.textContent = age.days;
+            totalDaysValue.textContent = age.totalDays;
+
+            // Show result card
+            resultCard.classList.add('show');
+
+            // Scroll to result
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+
+        function removeLoadingState(button) {
+            button.classList.remove('loading');
+            button.disabled = false;
+        }
+
+        // Add input event listeners to clear error states
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                document.getElementById('errorMessage').classList.remove('show');
+            });
+        });
+
+        // Add keyboard support
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                calculateAge();
+            }
+        });
+    </script>
+</body>
+</html> 

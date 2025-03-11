@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        .calculator-card {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .calculator-header {
+            background: linear-gradient(135deg, var(--primary-color), #2980b9);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .calculator-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .calculator-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        .result-formula {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-calculate {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-calculate:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .calculator-tabs {
+            margin-bottom: 2rem;
+        }
+
+        .nav-tabs {
+            border: none;
+            gap: 1rem;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .calculator-card {
+                margin: 1rem;
+            }
+
+            .calculator-body {
+                padding: 1rem;
+            }
+
+            .result-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Add error message styles */
+        .error-message {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Add input validation styles */
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linecap='round' d='M6 3.75v1.5m0 3h1.5m-1.5 1.5h1.5'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(.375em + .1875rem) center;
+            background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+        }
+
+        .form-control.is-invalid:focus {
+            border-color: #dc3545;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <main class="container py-5">
+        <div class="calculator-card">
+            <div class="calculator-header">
+                <h2>Percentage Calculator</h2>
+            </div>
+            <div class="calculator-body">
+                <ul class="nav nav-tabs calculator-tabs" id="calculatorTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="percentage-tab" data-bs-toggle="tab" data-bs-target="#percentage" type="button" role="tab">
+                            <i class="fas fa-percentage me-2"></i>Find Percentage
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="value-tab" data-bs-toggle="tab" data-bs-target="#value" type="button" role="tab">
+                            <i class="fas fa-calculator me-2"></i>Find Value
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="change-tab" data-bs-toggle="tab" data-bs-target="#change" type="button" role="tab">
+                            <i class="fas fa-chart-line me-2"></i>Percentage Change
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="calculatorTabContent">
+                    <!-- Find Percentage Tab -->
+                    <div class="tab-pane fade show active" id="percentage" role="tabpanel">
+                        <div class="form-group">
+                            <label class="form-label">What percentage of</label>
+                            <input type="number" class="form-control" id="totalValue" placeholder="Enter total value">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">is</label>
+                            <input type="number" class="form-control" id="partialValue" placeholder="Enter partial value">
+                        </div>
+                        <button class="btn btn-calculate w-100" onclick="calculatePercentage()">
+                            Calculate Percentage
+                        </button>
+                    </div>
+
+                    <!-- Find Value Tab -->
+                    <div class="tab-pane fade" id="value" role="tabpanel">
+                        <div class="form-group">
+                            <label class="form-label">What is</label>
+                            <input type="number" class="form-control" id="percentageValue" placeholder="Enter percentage">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">of</label>
+                            <input type="number" class="form-control" id="baseValue" placeholder="Enter base value">
+                        </div>
+                        <button class="btn btn-calculate w-100" onclick="calculateValue()">
+                            Calculate Value
+                        </button>
+                    </div>
+
+                    <!-- Percentage Change Tab -->
+                    <div class="tab-pane fade" id="change" role="tabpanel">
+                        <div class="form-group">
+                            <label class="form-label">Initial Value</label>
+                            <input type="number" class="form-control" id="initialValue" placeholder="Enter initial value">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Final Value</label>
+                            <input type="number" class="form-control" id="finalValue" placeholder="Enter final value">
+                        </div>
+                        <button class="btn btn-calculate w-100" onclick="calculateChange()">
+                            Calculate Change
+                        </button>
+                    </div>
+                </div>
+
+                <div class="result-card" id="resultCard">
+                    <h5 class="mb-3">Result</h5>
+                    <div class="error-message" id="errorMessage"></div>
+                    <div class="result-value" id="resultValue"></div>
+                    <div class="result-formula" id="resultFormula"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script>
+        // Track tool usage
+        trackToolUsage('percentage-calculator');
+
+        function validateInput(input, fieldName) {
+            const value = parseFloat(input.value);
+            if (isNaN(value)) {
+                showError(`${fieldName} must be a valid number`);
+                input.classList.add('is-invalid');
+                return false;
+            }
+            input.classList.remove('is-invalid');
+            return true;
+        }
+
+        function calculatePercentage() {
+            const totalInput = document.getElementById('totalValue');
+            const partialInput = document.getElementById('partialValue');
+            
+            if (!validateInput(totalInput, 'Total value') || !validateInput(partialInput, 'Partial value')) {
+                return;
+            }
+
+            const total = parseFloat(totalInput.value);
+            const partial = parseFloat(partialInput.value);
+
+            if (total === 0) {
+                showError('Total value cannot be zero');
+                return;
+            }
+
+            const percentage = (partial / total) * 100;
+            showResult(percentage.toFixed(2) + '%', 
+                `${partial} is ${percentage.toFixed(2)}% of ${total}`);
+        }
+
+        function calculateValue() {
+            const percentageInput = document.getElementById('percentageValue');
+            const baseInput = document.getElementById('baseValue');
+            
+            if (!validateInput(percentageInput, 'Percentage') || !validateInput(baseInput, 'Base value')) {
+                return;
+            }
+
+            const percentage = parseFloat(percentageInput.value);
+            const base = parseFloat(baseInput.value);
+
+            const value = (percentage / 100) * base;
+            showResult(value.toFixed(2), 
+                `${percentage}% of ${base} = ${value.toFixed(2)}`);
+        }
+
+        function calculateChange() {
+            const initialInput = document.getElementById('initialValue');
+            const finalInput = document.getElementById('finalValue');
+            
+            if (!validateInput(initialInput, 'Initial value') || !validateInput(finalInput, 'Final value')) {
+                return;
+            }
+
+            const initial = parseFloat(initialInput.value);
+            const final = parseFloat(finalInput.value);
+
+            if (initial === 0) {
+                showError('Initial value cannot be zero');
+                return;
+            }
+
+            const change = ((final - initial) / initial) * 100;
+            const sign = change >= 0 ? '+' : '';
+            showResult(sign + change.toFixed(2) + '%', 
+                `Change from ${initial} to ${final} = ${sign}${change.toFixed(2)}%`);
+        }
+
+        function showResult(value, formula) {
+            const resultCard = document.getElementById('resultCard');
+            const resultValue = document.getElementById('resultValue');
+            const resultFormula = document.getElementById('resultFormula');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Clear any previous errors
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+
+            resultValue.textContent = value;
+            resultFormula.textContent = formula;
+            resultCard.classList.add('show');
+
+            // Scroll to result
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showError(message) {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+        }
+
+        // Add input event listeners to clear error states
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                document.getElementById('errorMessage').classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html> 

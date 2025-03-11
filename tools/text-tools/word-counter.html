@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title mb-4">Word Counter</h1>
+                        <p class="card-text">Count words, characters, paragraphs, and more in your text.</p>
+                        
+                        <!-- Tool Form -->
+                        <form id="counterForm" class="mb-4">
+                            <div class="mb-3">
+                                <label for="textInput" class="form-label">Enter Text</label>
+                                <textarea class="form-control" id="textInput" rows="6" 
+                                          placeholder="Paste or type your text here..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="countSpaces" checked>
+                                    <label class="form-check-label" for="countSpaces">Count spaces</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="countPunctuation" checked>
+                                    <label class="form-check-label" for="countPunctuation">Count punctuation</label>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Results Section -->
+                        <div id="resultsSection" class="mb-4">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Words</h6>
+                                            <h3 id="wordCount" class="mb-0">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Characters</h6>
+                                            <h3 id="charCount" class="mb-0">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Paragraphs</h6>
+                                            <h3 id="paragraphCount" class="mb-0">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Sentences</h6>
+                                            <h3 id="sentenceCount" class="mb-0">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Stats -->
+                        <div id="additionalStats" class="mb-4">
+                            <h4>Additional Statistics</h4>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <td>Reading Time</td>
+                                            <td id="readingTime">0 minutes</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Speaking Time</td>
+                                            <td id="speakingTime">0 minutes</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Average Word Length</td>
+                                            <td id="avgWordLength">0 characters</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="mt-4">
+                            <h4>How to Use</h4>
+                            <ol>
+                                <li>Paste or type your text in the input area</li>
+                                <li>Choose whether to count spaces and punctuation</li>
+                                <li>View the statistics in real-time</li>
+                                <li>Use the additional statistics for more insights</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="word-counter.js"></script>
+</body>
+</html> 

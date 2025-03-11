@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Text Generator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        .text-output {
+            min-height: 200px;
+            resize: vertical;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+
+        .generator-options {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
+        }
+
+        .btn-generate {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-generate:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-generate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">Random Text Generator</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="generator-options">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="generatorType" class="form-label">Generator Type</label>
+                                    <select class="form-select" id="generatorType">
+                                        <option value="lorem">Lorem Ipsum</option>
+                                        <option value="words">Random Words</option>
+                                        <option value="sentences">Random Sentences</option>
+                                        <option value="paragraphs">Random Paragraphs</option>
+                                        <option value="custom">Custom Pattern</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="outputLength" class="form-label">Output Length</label>
+                                    <select class="form-select" id="outputLength">
+                                        <option value="short">Short (50-100 words)</option>
+                                        <option value="medium" selected>Medium (200-300 words)</option>
+                                        <option value="long">Long (500-1000 words)</option>
+                                    </select>
+                                </div>
+                                <div class="col-12" id="customPatternSection" style="display: none;">
+                                    <label for="customPattern" class="form-label">Custom Pattern</label>
+                                    <input type="text" class="form-control" id="customPattern" placeholder="Enter pattern (e.g., {word} {number} {word})">
+                                    <div class="form-text">
+                                        Available patterns: {word}, {number}, {sentence}, {paragraph}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <textarea class="form-control text-output" id="textOutput" readonly></textarea>
+                        </div>
+
+                        <div class="loading" id="loading">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-2">Generating text...</p>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn btn-generate w-100" id="generateBtn">
+                                Generate Text
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script>
+        // Track tool usage
+        trackToolUsage('random-text-generator');
+
+        const generatorType = document.getElementById('generatorType');
+        const outputLength = document.getElementById('outputLength');
+        const customPatternSection = document.getElementById('customPatternSection');
+        const customPattern = document.getElementById('customPattern');
+        const textOutput = document.getElementById('textOutput');
+        const generateBtn = document.getElementById('generateBtn');
+        const loading = document.getElementById('loading');
+
+        // Sample words for random generation
+        const words = [
+            'the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'I',
+            'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at',
+            'this', 'but', 'his', 'by', 'from', 'they', 'we', 'say', 'her', 'she',
+            'or', 'an', 'will', 'my', 'one', 'all', 'would', 'there', 'their', 'what',
+            'so', 'up', 'out', 'if', 'about', 'who', 'get', 'which', 'go', 'me',
+            'when', 'make', 'can', 'like', 'time', 'no', 'just', 'him', 'know', 'take'
+        ];
+
+        // Sample sentences for random generation
+        const sentences = [
+            'The quick brown fox jumps over the lazy dog.',
+            'A journey of a thousand miles begins with a single step.',
+            'All that glitters is not gold.',
+            'Actions speak louder than words.',
+            'Beauty is in the eye of the beholder.',
+            'Better late than never.',
+            'Don\'t count your chickens before they hatch.',
+            'Every cloud has a silver lining.',
+            'Fortune favors the bold.',
+            'Good things come to those who wait.'
+        ];
+
+        // Event listeners
+        generatorType.addEventListener('change', () => {
+            customPatternSection.style.display = 
+                generatorType.value === 'custom' ? 'block' : 'none';
+        });
+
+        generateBtn.addEventListener('click', generateText);
+
+        function generateText() {
+            loading.classList.add('show');
+            generateBtn.disabled = true;
+
+            setTimeout(() => {
+                let generatedText = '';
+                const type = generatorType.value;
+                const length = outputLength.value;
+
+                switch (type) {
+                    case 'lorem':
+                        generatedText = generateLoremIpsum(length);
+                        break;
+                    case 'words':
+                        generatedText = generateRandomWords(length);
+                        break;
+                    case 'sentences':
+                        generatedText = generateRandomSentences(length);
+                        break;
+                    case 'paragraphs':
+                        generatedText = generateRandomParagraphs(length);
+                        break;
+                    case 'custom':
+                        generatedText = generateCustomPattern();
+                        break;
+                }
+
+                textOutput.value = generatedText;
+                loading.classList.remove('show');
+                generateBtn.disabled = false;
+            }, 500);
+        }
+
+        function generateLoremIpsum(length) {
+            const loremWords = [
+                'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur',
+                'adipiscing', 'elit', 'sed', 'do', 'eiusmod', 'tempor',
+                'incididunt', 'ut', 'labore', 'et', 'dolore', 'magna', 'aliqua'
+            ];
+
+            let text = '';
+            const wordCount = getWordCount(length);
+
+            for (let i = 0; i < wordCount; i++) {
+                text += loremWords[Math.floor(Math.random() * loremWords.length)] + ' ';
+                if ((i + 1) % 5 === 0) text += '\n';
+            }
+
+            return text.trim();
+        }
+
+        function generateRandomWords(length) {
+            let text = '';
+            const wordCount = getWordCount(length);
+
+            for (let i = 0; i < wordCount; i++) {
+                text += words[Math.floor(Math.random() * words.length)] + ' ';
+                if ((i + 1) % 5 === 0) text += '\n';
+            }
+
+            return text.trim();
+        }
+
+        function generateRandomSentences(length) {
+            let text = '';
+            const sentenceCount = getSentenceCount(length);
+
+            for (let i = 0; i < sentenceCount; i++) {
+                text += sentences[Math.floor(Math.random() * sentences.length)] + ' ';
+                if ((i + 1) % 2 === 0) text += '\n';
+            }
+
+            return text.trim();
+        }
+
+        function generateRandomParagraphs(length) {
+            let text = '';
+            const paragraphCount = getParagraphCount(length);
+
+            for (let i = 0; i < paragraphCount; i++) {
+                const sentenceCount = Math.floor(Math.random() * 3) + 3;
+                for (let j = 0; j < sentenceCount; j++) {
+                    text += sentences[Math.floor(Math.random() * sentences.length)] + ' ';
+                }
+                text += '\n\n';
+            }
+
+            return text.trim();
+        }
+
+        function generateCustomPattern() {
+            const pattern = customPattern.value.trim();
+            if (!pattern) return 'Please enter a custom pattern.';
+
+            let text = '';
+            const parts = pattern.split(' ');
+            
+            for (let i = 0; i < 5; i++) {
+                let line = '';
+                parts.forEach(part => {
+                    switch (part) {
+                        case '{word}':
+                            line += words[Math.floor(Math.random() * words.length)] + ' ';
+                            break;
+                        case '{number}':
+                            line += Math.floor(Math.random() * 100) + ' ';
+                            break;
+                        case '{sentence}':
+                            line += sentences[Math.floor(Math.random() * sentences.length)] + ' ';
+                            break;
+                        case '{paragraph}':
+                            const sentenceCount = Math.floor(Math.random() * 3) + 3;
+                            for (let j = 0; j < sentenceCount; j++) {
+                                line += sentences[Math.floor(Math.random() * sentences.length)] + ' ';
+                            }
+                            break;
+                        default:
+                            line += part + ' ';
+                    }
+                });
+                text += line.trim() + '\n';
+            }
+
+            return text.trim();
+        }
+
+        function getWordCount(length) {
+            switch (length) {
+                case 'short': return Math.floor(Math.random() * 51) + 50;
+                case 'medium': return Math.floor(Math.random() * 101) + 200;
+                case 'long': return Math.floor(Math.random() * 501) + 500;
+                default: return 200;
+            }
+        }
+
+        function getSentenceCount(length) {
+            switch (length) {
+                case 'short': return Math.floor(Math.random() * 3) + 3;
+                case 'medium': return Math.floor(Math.random() * 5) + 5;
+                case 'long': return Math.floor(Math.random() * 10) + 10;
+                default: return 5;
+            }
+        }
+
+        function getParagraphCount(length) {
+            switch (length) {
+                case 'short': return Math.floor(Math.random() * 2) + 2;
+                case 'medium': return Math.floor(Math.random() * 3) + 3;
+                case 'long': return Math.floor(Math.random() * 5) + 5;
+                default: return 3;
+            }
+        }
+    </script>
+</body>
+</html> 

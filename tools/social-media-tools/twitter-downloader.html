@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Video Downloader - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Meta tags for better SEO -->
+    <meta name="description" content="Download videos from Twitter posts, threads, and spaces in high quality. Free Twitter video downloader tool.">
+    <meta name="keywords" content="twitter video downloader, twitter video saver, twitter video extractor, twitter download tool">
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title mb-4">Twitter Video Downloader</h1>
+                        <p class="card-text">Download videos from Twitter posts and threads in high quality.</p>
+                        
+                        <!-- Tool Form -->
+                        <form id="downloaderForm" class="mb-4" novalidate>
+                            <div class="mb-3">
+                                <label for="videoUrl" class="form-label">Twitter Video URL</label>
+                                <div class="input-group">
+                                    <input type="url" class="form-control" id="videoUrl" 
+                                           placeholder="https://twitter.com/..." required
+                                           aria-describedby="urlHelp urlError">
+                                    <button type="button" class="btn btn-outline-secondary" id="pasteButton">
+                                        <i class="fas fa-paste"></i>
+                                    </button>
+                                </div>
+                                <div id="urlHelp" class="form-text">Paste the Twitter video URL here</div>
+                                <div id="urlError" class="invalid-feedback"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="contentType" class="form-label">Content Type</label>
+                                <select class="form-select" id="contentType" aria-describedby="contentTypeHelp">
+                                    <option value="tweet">Tweet</option>
+                                    <option value="thread">Thread</option>
+                                    <option value="space">Space</option>
+                                </select>
+                                <div id="contentTypeHelp" class="form-text">Select the type of content you want to download</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="quality" class="form-label">Video Quality</label>
+                                <select class="form-select" id="quality" aria-describedby="qualityHelp">
+                                    <option value="hd">High Quality (HD)</option>
+                                    <option value="sd">Standard Quality (SD)</option>
+                                </select>
+                                <div id="qualityHelp" class="form-text">Choose your preferred video quality</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="submitButton">
+                                <i class="fas fa-download me-2"></i>Download Video
+                            </button>
+                        </form>
+
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="text-center d-none" role="status" aria-live="polite">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Processing video...</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+
+                        <!-- Success Message -->
+                        <div id="successMessage" class="alert alert-success d-none" role="alert"></div>
+
+                        <!-- Video Preview -->
+                        <div id="videoPreview" class="card mb-4 d-none">
+                            <div class="card-body">
+                                <h5 class="card-title">Video Preview</h5>
+                                <div class="ratio ratio-16x9">
+                                    <video id="previewPlayer" controls preload="metadata">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Video Info -->
+                        <div id="videoInfo" class="card mb-4 d-none">
+                            <div class="card-body">
+                                <h5 class="card-title">Video Information</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Author:</strong> <span id="author">-</span></p>
+                                        <p><strong>Duration:</strong> <span id="duration">-</span></p>
+                                        <p><strong>Quality:</strong> <span id="videoQuality">-</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Size:</strong> <span id="fileSize">-</span></p>
+                                        <p><strong>Format:</strong> <span id="format">-</span></p>
+                                        <p><strong>Retweets:</strong> <span id="retweets">-</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Download Options -->
+                        <div id="downloadOptions" class="d-none">
+                            <h4 class="mb-3">Download Options</h4>
+                            <div class="d-grid gap-2">
+                                <button id="downloadBtn" class="btn btn-success">
+                                    <i class="fas fa-download me-2"></i>Download Video
+                                </button>
+                                <button id="downloadAudioBtn" class="btn btn-info">
+                                    <i class="fas fa-music me-2"></i>Download Audio Only
+                                </button>
+                                <button id="downloadGifBtn" class="btn btn-warning">
+                                    <i class="fas fa-film me-2"></i>Download as GIF
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="mt-4">
+                            <h4>How to Use</h4>
+                            <ol>
+                                <li>Copy the Twitter video URL from your browser</li>
+                                <li>Select the type of content (tweet, thread, or space)</li>
+                                <li>Choose your preferred video quality</li>
+                                <li>Click "Download Video" to start the download</li>
+                            </ol>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Note: This tool supports public Twitter content only. Private tweets cannot be downloaded.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="twitter-downloader.js"></script>
+</body>
+</html> 

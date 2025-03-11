@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to PNG Converter - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title mb-4">Image to PNG Converter</h1>
+                        <p class="card-text">Convert your images to PNG format with high quality and transparency support.</p>
+                        
+                        <!-- Tool Form -->
+                        <form id="converterForm" class="mb-4">
+                            <div class="mb-3">
+                                <label for="imageInput" class="form-label">Select Image</label>
+                                <input type="file" class="form-control" id="imageInput" accept="image/*" required>
+                                <div class="form-text">Supported formats: JPG, JPEG, GIF, WebP, BMP</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="quality" class="form-label">Quality</label>
+                                <input type="range" class="form-range" id="quality" min="0" max="100" value="90">
+                                <div class="form-text">Higher quality means larger file size</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-exchange-alt me-2"></i>Convert to PNG
+                            </button>
+                        </form>
+
+                        <!-- Preview Section -->
+                        <div id="previewSection" class="mb-4 d-none">
+                            <h3 class="mb-3">Preview</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Original Image</h5>
+                                            <img id="originalPreview" src="" alt="Original image" class="img-fluid rounded">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Converted PNG</h5>
+                                            <img id="convertedPreview" src="" alt="Converted image" class="img-fluid rounded">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Download Section -->
+                        <div id="downloadSection" class="d-none">
+                            <h3 class="mb-3">Download</h3>
+                            <div class="d-grid gap-2">
+                                <button id="downloadBtn" class="btn btn-success">
+                                    <i class="fas fa-download me-2"></i>Download PNG
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="text-center d-none">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Converting image...</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="errorMessage" class="alert alert-danger d-none"></div>
+
+                        <!-- Instructions -->
+                        <div class="mt-4">
+                            <h4>How to Use</h4>
+                            <ol>
+                                <li>Click "Select Image" to choose your image file</li>
+                                <li>Adjust the quality slider if needed</li>
+                                <li>Click "Convert to PNG" to start the conversion</li>
+                                <li>Preview the result and click "Download PNG" to save</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="image-to-png.js"></script>
+</body>
+</html> 

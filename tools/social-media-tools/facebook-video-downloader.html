@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Video Downloader - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title mb-4">Facebook Video Downloader</h1>
+                        <p class="card-text">Download videos from Facebook posts, reels, and stories in high quality.</p>
+                        
+                        <!-- Tool Form -->
+                        <form id="downloaderForm" class="mb-4">
+                            <div class="mb-3">
+                                <label for="videoUrl" class="form-label">Facebook Video URL</label>
+                                <input type="url" class="form-control" id="videoUrl" 
+                                       placeholder="https://www.facebook.com/..." required>
+                                <div class="form-text">Paste the Facebook video URL here</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="quality" class="form-label">Video Quality</label>
+                                <select class="form-select" id="quality">
+                                    <option value="hd">High Quality (HD)</option>
+                                    <option value="sd">Standard Quality (SD)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-download me-2"></i>Download Video
+                            </button>
+                        </form>
+
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="text-center d-none">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Processing video...</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="errorMessage" class="alert alert-danger d-none"></div>
+
+                        <!-- Video Info -->
+                        <div id="videoInfo" class="card mb-4 d-none">
+                            <div class="card-body">
+                                <h5 class="card-title">Video Information</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Duration:</strong> <span id="duration">-</span></p>
+                                        <p><strong>Quality:</strong> <span id="videoQuality">-</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Size:</strong> <span id="fileSize">-</span></p>
+                                        <p><strong>Format:</strong> <span id="format">-</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Download Options -->
+                        <div id="downloadOptions" class="d-none">
+                            <h4 class="mb-3">Download Options</h4>
+                            <div class="d-grid gap-2">
+                                <button id="downloadBtn" class="btn btn-success">
+                                    <i class="fas fa-download me-2"></i>Download Video
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="mt-4">
+                            <h4>How to Use</h4>
+                            <ol>
+                                <li>Copy the Facebook video URL from your browser</li>
+                                <li>Paste the URL in the input field above</li>
+                                <li>Select your preferred video quality</li>
+                                <li>Click "Download Video" to start the download</li>
+                            </ol>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Note: This tool supports public Facebook videos only. Private videos cannot be downloaded.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="facebook-video-downloader.js"></script>
+</body>
+</html> 

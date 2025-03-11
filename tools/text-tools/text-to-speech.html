@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to Speech - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        .text-input {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        .voice-controls {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
+        }
+
+        .playback-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .playback-controls button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .playback-controls button:hover {
+            transform: scale(1.1);
+        }
+
+        .playback-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .speed-value {
+            min-width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">Text to Speech</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="textInput" class="form-label">Enter Text</label>
+                            <textarea class="form-control text-input" id="textInput" placeholder="Type or paste your text here..."></textarea>
+                        </div>
+
+                        <div class="voice-controls">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="languageSelect" class="form-label">Language</label>
+                                    <select class="form-select" id="languageSelect">
+                                        <option value="en-US">English (US)</option>
+                                        <option value="en-GB">English (UK)</option>
+                                        <option value="es-ES">Spanish</option>
+                                        <option value="fr-FR">French</option>
+                                        <option value="de-DE">German</option>
+                                        <option value="it-IT">Italian</option>
+                                        <option value="pt-BR">Portuguese</option>
+                                        <option value="ru-RU">Russian</option>
+                                        <option value="ja-JP">Japanese</option>
+                                        <option value="ko-KR">Korean</option>
+                                        <option value="zh-CN">Chinese</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="voiceSelect" class="form-label">Voice</label>
+                                    <select class="form-select" id="voiceSelect">
+                                        <!-- Voices will be populated dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="speed-control mt-3">
+                                <label for="speedRange" class="form-label">Speed</label>
+                                <input type="range" class="form-range" id="speedRange" min="0.5" max="2" step="0.1" value="1">
+                                <span class="speed-value" id="speedValue">1.0x</span>
+                            </div>
+
+                            <div class="playback-controls">
+                                <button class="btn btn-primary" id="playBtn" disabled>
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="btn btn-secondary" id="pauseBtn" disabled>
+                                    <i class="fas fa-pause"></i>
+                                </button>
+                                <button class="btn btn-danger" id="stopBtn" disabled>
+                                    <i class="fas fa-stop"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="loading" id="loading">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-2">Processing speech...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script>
+        // Track tool usage
+        trackToolUsage('text-to-speech');
+
+        const textInput = document.getElementById('textInput');
+        const languageSelect = document.getElementById('languageSelect');
+        const voiceSelect = document.getElementById('voiceSelect');
+        const speedRange = document.getElementById('speedRange');
+        const speedValue = document.getElementById('speedValue');
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const loading = document.getElementById('loading');
+
+        let speech = null;
+        let voices = [];
+
+        // Initialize speech synthesis
+        function initSpeechSynthesis() {
+            speech = new SpeechSynthesisUtterance();
+            speech.onend = () => {
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = true;
+                loading.classList.remove('show');
+            };
+            speech.onerror = (event) => {
+                showError('Error occurred while speaking. Please try again.');
+                playBtn.disabled = false;
+                pauseBtn.disabled = true;
+                stopBtn.disabled = true;
+                loading.classList.remove('show');
+            };
+        }
+
+        // Load available voices
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            voiceSelect.innerHTML = '';
+            
+            voices.forEach(voice => {
+                if (voice.lang.startsWith(languageSelect.value)) {
+                    const option = document.createElement('option');
+                    option.value = voice.name;
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    voiceSelect.appendChild(option);
+                }
+            });
+        }
+
+        // Event listeners
+        textInput.addEventListener('input', () => {
+            playBtn.disabled = !textInput.value.trim();
+        });
+
+        languageSelect.addEventListener('change', loadVoices);
+
+        speedRange.addEventListener('input', (e) => {
+            const speed = parseFloat(e.target.value);
+            speedValue.textContent = `${speed.toFixed(1)}x`;
+            if (speech) {
+                speech.rate = speed;
+            }
+        });
+
+        playBtn.addEventListener('click', () => {
+            if (!speech) {
+                initSpeechSynthesis();
+            }
+
+            speech.text = textInput.value;
+            speech.lang = languageSelect.value;
+            speech.voice = voices.find(voice => voice.name === voiceSelect.value);
+            speech.rate = parseFloat(speedRange.value);
+
+            speechSynthesis.speak(speech);
+            playBtn.disabled = true;
+            pauseBtn.disabled = false;
+            stopBtn.disabled = false;
+            loading.classList.add('show');
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            speechSynthesis.pause();
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+            loading.classList.remove('show');
+        });
+
+        stopBtn.addEventListener('click', () => {
+            speechSynthesis.cancel();
+            playBtn.disabled = false;
+            pauseBtn.disabled = true;
+            stopBtn.disabled = true;
+            loading.classList.remove('show');
+        });
+
+        // Initialize voices when they're loaded
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+    </script>
+</body>
+</html> 

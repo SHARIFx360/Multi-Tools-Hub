@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Thumbnail Downloader - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Meta tags for better SEO -->
+    <meta name="description" content="Download YouTube video thumbnails in various resolutions. Free YouTube thumbnail downloader tool.">
+    <meta name="keywords" content="youtube thumbnail downloader, youtube thumbnail extractor, youtube thumbnail saver, youtube thumbnail tool">
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title mb-4">YouTube Thumbnail Downloader</h1>
+                        <p class="card-text">Download high-quality thumbnails from YouTube videos in various resolutions.</p>
+                        
+                        <!-- Tool Form -->
+                        <form id="downloaderForm" class="mb-4" novalidate>
+                            <div class="mb-3">
+                                <label for="videoUrl" class="form-label">YouTube Video URL</label>
+                                <div class="input-group">
+                                    <input type="url" class="form-control" id="videoUrl" 
+                                           placeholder="https://www.youtube.com/watch?v=..." required
+                                           aria-describedby="urlHelp urlError">
+                                    <button type="button" class="btn btn-outline-secondary" id="pasteButton">
+                                        <i class="fas fa-paste"></i>
+                                    </button>
+                                </div>
+                                <div id="urlHelp" class="form-text">Paste the YouTube video URL here</div>
+                                <div id="urlError" class="invalid-feedback"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="submitButton">
+                                <i class="fas fa-search me-2"></i>Get Thumbnails
+                            </button>
+                        </form>
+
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="text-center d-none" role="status" aria-live="polite">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Fetching thumbnails...</p>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+
+                        <!-- Success Message -->
+                        <div id="successMessage" class="alert alert-success d-none" role="alert"></div>
+
+                        <!-- Video Info -->
+                        <div id="videoInfo" class="card mb-4 d-none">
+                            <div class="card-body">
+                                <h5 class="card-title">Video Information</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Title:</strong> <span id="videoTitle">-</span></p>
+                                        <p><strong>Channel:</strong> <span id="channelName">-</span></p>
+                                        <p><strong>Views:</strong> <span id="viewCount">-</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Published:</strong> <span id="publishDate">-</span></p>
+                                        <p><strong>Duration:</strong> <span id="duration">-</span></p>
+                                        <p><strong>Category:</strong> <span id="category">-</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnails Preview -->
+                        <div id="thumbnailsPreview" class="card mb-4 d-none">
+                            <div class="card-body">
+                                <h5 class="card-title">Available Thumbnails</h5>
+                                <div class="row g-3" id="thumbnailsGrid"></div>
+                            </div>
+                        </div>
+
+                        <!-- Download Options -->
+                        <div id="downloadOptions" class="d-none">
+                            <h4 class="mb-3">Download Options</h4>
+                            <div class="d-grid gap-2">
+                                <button id="downloadAllBtn" class="btn btn-success">
+                                    <i class="fas fa-download me-2"></i>Download All Thumbnails
+                                </button>
+                                <button id="downloadZipBtn" class="btn btn-info">
+                                    <i class="fas fa-file-archive me-2"></i>Download as ZIP
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="mt-4">
+                            <h4>How to Use</h4>
+                            <ol>
+                                <li>Copy the YouTube video URL from your browser</li>
+                                <li>Click "Get Thumbnails" to fetch available thumbnails</li>
+                                <li>Choose your preferred thumbnail resolution</li>
+                                <li>Download the thumbnail(s) in your desired format</li>
+                            </ol>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Note: Available thumbnail resolutions may vary depending on the video quality and upload settings.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="youtube-thumbnail-downloader.js"></script>
+</body>
+</html> 

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        .calculator {
+            max-width: 400px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .calculator-display {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        .calculator-display #expression {
+            font-size: 1.2rem;
+            color: #666;
+            min-height: 24px;
+            margin-bottom: 0.5rem;
+        }
+
+        .calculator-display #result {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+            word-wrap: break-word;
+        }
+
+        .calculator-buttons {
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calculator-btn {
+            padding: 1rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            background: #f8f9fa;
+            color: #2c3e50;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calculator-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .calculator-btn.operator {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .calculator-btn.function {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .calculator-btn.equals {
+            background: #1976d2;
+            color: white;
+            grid-column: span 2;
+        }
+
+        .calculator-btn.clear {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+
+        .calculator-btn.backspace {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .calculator-history {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .history-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-expression {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .history-result {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            .calculator {
+                margin: 1rem;
+            }
+
+            .calculator-display #result {
+                font-size: 2rem;
+            }
+
+            .calculator-btn {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <main class="container py-5">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="calculator">
+                    <div class="calculator-display">
+                        <div id="expression"></div>
+                        <div id="result">0</div>
+                    </div>
+                    <div class="calculator-buttons">
+                        <button class="calculator-btn clear" onclick="clearCalculator()">C</button>
+                        <button class="calculator-btn backspace" onclick="backspace()">
+                            <i class="fas fa-backspace"></i>
+                        </button>
+                        <button class="calculator-btn function" onclick="addToExpression('(')">(</button>
+                        <button class="calculator-btn function" onclick="addToExpression(')')">)</button>
+                        <button class="calculator-btn function" onclick="addToExpression('sin(')">sin</button>
+                        <button class="calculator-btn function" onclick="addToExpression('cos(')">cos</button>
+                        <button class="calculator-btn function" onclick="addToExpression('tan(')">tan</button>
+                        <button class="calculator-btn operator" onclick="addToExpression('/')">/</button>
+                        <button class="calculator-btn" onclick="addToExpression('7')">7</button>
+                        <button class="calculator-btn" onclick="addToExpression('8')">8</button>
+                        <button class="calculator-btn" onclick="addToExpression('9')">9</button>
+                        <button class="calculator-btn operator" onclick="addToExpression('*')">×</button>
+                        <button class="calculator-btn" onclick="addToExpression('4')">4</button>
+                        <button class="calculator-btn" onclick="addToExpression('5')">5</button>
+                        <button class="calculator-btn" onclick="addToExpression('6')">6</button>
+                        <button class="calculator-btn operator" onclick="addToExpression('-')">-</button>
+                        <button class="calculator-btn" onclick="addToExpression('1')">1</button>
+                        <button class="calculator-btn" onclick="addToExpression('2')">2</button>
+                        <button class="calculator-btn" onclick="addToExpression('3')">3</button>
+                        <button class="calculator-btn operator" onclick="addToExpression('+')">+</button>
+                        <button class="calculator-btn" onclick="addToExpression('0')">0</button>
+                        <button class="calculator-btn" onclick="addToExpression('.')">.</button>
+                        <button class="calculator-btn equals" onclick="calculate()">=</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="calculator-history">
+                    <h5 class="mb-3">Calculation History</h5>
+                    <div id="history"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script>
+        // Track tool usage
+        trackToolUsage('scientific-calculator');
+
+        let expression = '';
+        let history = [];
+
+        function addToExpression(value) {
+            expression += value;
+            updateDisplay();
+        }
+
+        function clearCalculator() {
+            expression = '';
+            updateDisplay();
+        }
+
+        function backspace() {
+            expression = expression.slice(0, -1);
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('expression').textContent = expression;
+            document.getElementById('result').textContent = expression || '0';
+        }
+
+        function calculate() {
+            try {
+                // Replace trigonometric functions with Math functions
+                let processedExpression = expression
+                    .replace(/sin/g, 'Math.sin')
+                    .replace(/cos/g, 'Math.cos')
+                    .replace(/tan/g, 'Math.tan');
+
+                // Evaluate the expression
+                const result = eval(processedExpression);
+
+                // Add to history
+                history.unshift({
+                    expression: expression,
+                    result: result
+                });
+
+                // Keep only last 10 calculations
+                if (history.length > 10) {
+                    history.pop();
+                }
+
+                // Update history display
+                updateHistory();
+
+                // Update display with result
+                expression = result.toString();
+                updateDisplay();
+
+                // Show success message
+                showSuccess('Calculation completed successfully!');
+            } catch (error) {
+                // Show error message
+                showError('Invalid expression. Please check your input.');
+            }
+        }
+
+        function updateHistory() {
+            const historyElement = document.getElementById('history');
+            historyElement.innerHTML = history.map(item => `
+                <div class="history-item" onclick="useHistoryItem('${item.expression}')">
+                    <div class="history-expression">${item.expression}</div>
+                    <div class="history-result">${item.result}</div>
+                </div>
+            `).join('');
+        }
+
+        function useHistoryItem(expression) {
+            clearCalculator();
+            addToExpression(expression);
+        }
+
+        // Add keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9' || key === '.' || key === '+' || key === '-' || key === '*' || key === '/') {
+                addToExpression(key);
+            } else if (key === 'Enter') {
+                calculate();
+            } else if (key === 'Backspace') {
+                backspace();
+            } else if (key === 'Escape') {
+                clearCalculator();
+            }
+        });
+    </script>
+</body>
+</html> 

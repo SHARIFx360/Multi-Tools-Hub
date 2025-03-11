@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Keyboard - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .emoji-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .emoji-item:hover {
+            background-color: #f0f7ff;
+            transform: scale(1.1);
+        }
+
+        .emoji-item.copied {
+            background-color: #e3f2fd;
+            transform: scale(1.1);
+        }
+
+        .category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding: 0.5rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .category-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            background: #f8f9fa;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .category-tab:hover {
+            background: #e9ecef;
+        }
+
+        .category-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .search-input {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .search-input input {
+            padding-left: 2.5rem;
+        }
+
+        .recent-emojis {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding: 0.5rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .recent-emoji {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .recent-emoji:hover {
+            background-color: #f0f7ff;
+            transform: scale(1.1);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">Emoji Keyboard</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="search-input">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search emojis...">
+                        </div>
+
+                        <div class="recent-emojis" id="recentEmojis">
+                            <!-- Recent emojis will be populated dynamically -->
+                        </div>
+
+                        <div class="category-tabs" id="categoryTabs">
+                            <!-- Categories will be populated dynamically -->
+                        </div>
+
+                        <div class="emoji-grid" id="emojiGrid">
+                            <!-- Emojis will be populated dynamically -->
+                        </div>
+
+                        <div class="loading" id="loading">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-2">Loading emojis...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script>
+        // Track tool usage
+        trackToolUsage('emoji-keyboard');
+
+        const searchInput = document.getElementById('searchInput');
+        const recentEmojis = document.getElementById('recentEmojis');
+        const categoryTabs = document.getElementById('categoryTabs');
+        const emojiGrid = document.getElementById('emojiGrid');
+        const loading = document.getElementById('loading');
+
+        // Emoji categories
+        const categories = {
+            'smileys': '😀 😃 😄 😁 😅 😆 😉 😊 😋 😎',
+            'gestures': '👋 🤝 ✌️ 👌 👍 👎 👏 🙌 🎉 🎊',
+            'people': '👶 👧 🧒 👦 👩 🧑 👨 👩‍🦱 🧑‍🦱 👨‍🦱',
+            'animals': '🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯',
+            'food': '🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍈',
+            'activities': '⚽️ 🏀 🏈 ⚾️ 🎾 🏐 🏉 🎱 🎳 🎯',
+            'travel': '✈️ 🚀 🚁 🚂 🚗 🚕 🚙 🚌 🚎 🏎️',
+            'objects': '⌚️ 📱 📲 💻 ⌨️ 🖥 🖨 🕹 🎮 🎲',
+            'symbols': '❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔',
+            'flags': '🏳️ 🏴 🏁 🏳️‍🌈 🏳️‍⚧️ 🏴‍☠️ 🇦🇫 🇦🇽 🇦🇱 🇩🇿'
+        };
+
+        // Recent emojis storage
+        let recentEmojisList = JSON.parse(localStorage.getItem('recentEmojis')) || [];
+
+        // Initialize the emoji keyboard
+        function initEmojiKeyboard() {
+            loading.classList.add('show');
+
+            // Populate categories
+            Object.keys(categories).forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'category-tab';
+                button.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                button.addEventListener('click', () => showCategory(category));
+                categoryTabs.appendChild(button);
+            });
+
+            // Show first category by default
+            showCategory('smileys');
+
+            // Populate recent emojis
+            updateRecentEmojis();
+
+            loading.classList.remove('show');
+        }
+
+        // Show emojis for a specific category
+        function showCategory(category) {
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Clear and populate emoji grid
+            emojiGrid.innerHTML = '';
+            const emojis = categories[category].split(' ');
+            
+            emojis.forEach(emoji => {
+                const div = document.createElement('div');
+                div.className = 'emoji-item';
+                div.textContent = emoji;
+                div.addEventListener('click', () => copyEmoji(emoji));
+                emojiGrid.appendChild(div);
+            });
+        }
+
+        // Copy emoji to clipboard
+        function copyEmoji(emoji) {
+            navigator.clipboard.writeText(emoji).then(() => {
+                // Add to recent emojis
+                recentEmojisList = [emoji, ...recentEmojisList.filter(e => e !== emoji)].slice(0, 10);
+                localStorage.setItem('recentEmojis', JSON.stringify(recentEmojisList));
+                updateRecentEmojis();
+
+                // Show feedback
+                const element = event.target;
+                element.classList.add('copied');
+                setTimeout(() => {
+                    element.classList.remove('copied');
+                }, 1000);
+
+                showSuccess('Emoji copied to clipboard!');
+            }).catch(() => {
+                showError('Failed to copy emoji. Please try again.');
+            });
+        }
+
+        // Update recent emojis display
+        function updateRecentEmojis() {
+            recentEmojis.innerHTML = '';
+            recentEmojisList.forEach(emoji => {
+                const div = document.createElement('div');
+                div.className = 'recent-emoji';
+                div.textContent = emoji;
+                div.addEventListener('click', () => copyEmoji(emoji));
+                recentEmojis.appendChild(div);
+            });
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const allEmojis = Object.values(categories).join(' ').split(' ');
+            
+            emojiGrid.innerHTML = '';
+            allEmojis.forEach(emoji => {
+                if (emoji.toLowerCase().includes(searchTerm)) {
+                    const div = document.createElement('div');
+                    div.className = 'emoji-item';
+                    div.textContent = emoji;
+                    div.addEventListener('click', () => copyEmoji(emoji));
+                    emojiGrid.appendChild(div);
+                }
+            });
+        });
+
+        // Initialize when the page loads
+        initEmojiKeyboard();
+    </script>
+</body>
+</html> 

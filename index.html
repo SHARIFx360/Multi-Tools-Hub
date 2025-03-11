@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Tools Hub - Your All-in-One Tool Collection</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <!-- Search Container -->
+    <div id="search-container"></div>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        <!-- No Results Message -->
+        <div id="no-results-message" class="alert alert-info d-none">
+            No tools found matching your search criteria.
+        </div>
+
+        <!-- Social Media Tools Section -->
+        <section id="social-media-section" class="mb-5">
+            <h2 class="mb-4">🔥 Social Media Tools</h2>
+            <div class="row g-4">
+                <!-- Tools will be loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Image Tools Section -->
+        <section id="image-tools-section" class="mb-5">
+            <h2 class="mb-4">🖼️ Image Tools</h2>
+            <div class="row g-4">
+                <!-- Tools will be loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Text Tools Section -->
+        <section id="text-tools-section" class="mb-5">
+            <h2 class="mb-4">📄 Text Tools</h2>
+            <div class="row g-4">
+                <!-- Tools will be loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Math & Calculators Section -->
+        <section id="calculators-section" class="mb-5">
+            <h2 class="mb-4">🔢 Math & Calculators</h2>
+            <div class="row g-4">
+                <!-- Tools will be loaded dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/components.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Load tools into their respective sections
+        document.addEventListener('DOMContentLoaded', function() {
+            // Social Media Tools
+            const socialMediaSection = document.querySelector('#social-media-section .row');
+            tools.socialMedia.forEach(tool => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 col-lg-3';
+                col.appendChild(createToolCard(tool));
+                socialMediaSection.appendChild(col);
+            });
+
+            // Image Tools
+            const imageToolsSection = document.querySelector('#image-tools-section .row');
+            tools.imageTools.forEach(tool => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 col-lg-3';
+                col.appendChild(createToolCard(tool));
+                imageToolsSection.appendChild(col);
+            });
+
+            // Text Tools
+            const textToolsSection = document.querySelector('#text-tools-section .row');
+            tools.textTools.forEach(tool => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 col-lg-3';
+                col.appendChild(createToolCard(tool));
+                textToolsSection.appendChild(col);
+            });
+
+            // Calculators
+            const calculatorsSection = document.querySelector('#calculators-section .row');
+            tools.calculators.forEach(tool => {
+                const col = document.createElement('div');
+                col.className = 'col-md-4 col-lg-3';
+                col.appendChild(createToolCard(tool));
+                calculatorsSection.appendChild(col);
+            });
+        });
+    </script>
+</body>
+</html> 

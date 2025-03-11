@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Post Generator - Multi-Tools Hub</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/styles.css" rel="stylesheet">
+    <style>
+        .post-preview {
+            min-height: 200px;
+            resize: vertical;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            white-space: pre-wrap;
+        }
+
+        .template-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-card.selected {
+            border-color: var(--primary-color);
+            background-color: #f0f7ff;
+        }
+
+        .suggestion-chip {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            background-color: #e9ecef;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-chip:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-generate {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-generate:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-generate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Container -->
+    <div id="header-container"></div>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">Social Media Post Generator</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label for="platformSelect" class="form-label">Platform</label>
+                            <select class="form-select" id="platformSelect">
+                                <option value="facebook">Facebook</option>
+                                <option value="twitter">Twitter</option>
+                                <option value="instagram">Instagram</option>
+                                <option value="linkedin">LinkedIn</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Post Template</label>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card template-card" data-template="question">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Question Post</h5>
+                                            <p class="card-text">Engage your audience with a question</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card template-card" data-template="announcement">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Announcement</h5>
+                                            <p class="card-text">Share news and updates</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card template-card" data-template="promotion">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Promotion</h5>
+                                            <p class="card-text">Promote products or services</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card template-card" data-template="story">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Story</h5>
+                                            <p class="card-text">Share personal experiences</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Content Suggestions</label>
+                            <div id="suggestions" class="mb-3">
+                                <!-- Suggestions will be populated dynamically -->
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="postPreview" class="form-label">Post Preview</label>
+                            <textarea class="form-control post-preview" id="postPreview" readonly></textarea>
+                        </div>
+
+                        <div class="loading" id="loading">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-2">Generating post...</p>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-generate flex-grow-1" id="generateBtn">
+                                Generate New Post
+                            </button>
+                            <button class="btn btn-outline-primary" id="copyBtn">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <div id="footer-container"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="../../js/components.js"></script>
+    <script>
+        // Track tool usage
+        trackToolUsage('social-post-generator');
+
+        const platformSelect = document.getElementById('platformSelect');
+        const templateCards = document.querySelectorAll('.template-card');
+        const suggestions = document.getElementById('suggestions');
+        const postPreview = document.getElementById('postPreview');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const loading = document.getElementById('loading');
+
+        let selectedTemplate = null;
+
+        // Post templates
+        const templates = {
+            question: {
+                facebook: [
+                    "What's your favorite {topic}? Share your thoughts below! 👇",
+                    "Quick poll: {question}? Let us know in the comments!",
+                    "We're curious: {question}? Drop your answer below! 💭"
+                ],
+                twitter: [
+                    "What's your favorite {topic}? RT to share!",
+                    "Quick poll: {question}?",
+                    "We're curious: {question}? 🤔"
+                ],
+                instagram: [
+                    "What's your favorite {topic}? Share your thoughts below! 👇",
+                    "Quick poll: {question}? Let us know in the comments!",
+                    "We're curious: {question}? Drop your answer below! 💭"
+                ],
+                linkedin: [
+                    "What's your favorite {topic}? Share your thoughts in the comments!",
+                    "Quick poll: {question}? Let's discuss!",
+                    "We're curious: {question}? Share your perspective below! 💭"
+                ]
+            },
+            announcement: {
+                facebook: [
+                    "🎉 Exciting news! {announcement}",
+                    "📢 Important update: {announcement}",
+                    "✨ We're thrilled to announce: {announcement}"
+                ],
+                twitter: [
+                    "🎉 Exciting news! {announcement}",
+                    "📢 Important update: {announcement}",
+                    "✨ We're thrilled to announce: {announcement}"
+                ],
+                instagram: [
+                    "🎉 Exciting news! {announcement}",
+                    "📢 Important update: {announcement}",
+                    "✨ We're thrilled to announce: {announcement}"
+                ],
+                linkedin: [
+                    "🎉 Exciting news! {announcement}",
+                    "📢 Important update: {announcement}",
+                    "✨ We're thrilled to announce: {announcement}"
+                ]
+            },
+            promotion: {
+                facebook: [
+                    "🔥 Limited time offer! {promotion}",
+                    "🎁 Special deal: {promotion}",
+                    "💫 Don't miss out: {promotion}"
+                ],
+                twitter: [
+                    "🔥 Limited time offer! {promotion}",
+                    "🎁 Special deal: {promotion}",
+                    "💫 Don't miss out: {promotion}"
+                ],
+                instagram: [
+                    "🔥 Limited time offer! {promotion}",
+                    "🎁 Special deal: {promotion}",
+                    "💫 Don't miss out: {promotion}"
+                ],
+                linkedin: [
+                    "🔥 Limited time offer! {promotion}",
+                    "🎁 Special deal: {promotion}",
+                    "💫 Don't miss out: {promotion}"
+                ]
+            },
+            story: {
+                facebook: [
+                    "Today's story: {story}",
+                    "Behind the scenes: {story}",
+                    "A day in the life: {story}"
+                ],
+                twitter: [
+                    "Today's story: {story}",
+                    "Behind the scenes: {story}",
+                    "A day in the life: {story}"
+                ],
+                instagram: [
+                    "Today's story: {story}",
+                    "Behind the scenes: {story}",
+                    "A day in the life: {story}"
+                ],
+                linkedin: [
+                    "Today's story: {story}",
+                    "Behind the scenes: {story}",
+                    "A day in the life: {story}"
+                ]
+            }
+        };
+
+        // Content suggestions
+        const contentSuggestions = {
+            topic: ['technology', 'food', 'travel', 'music', 'movies', 'books', 'sports', 'fashion', 'art', 'nature'],
+            question: [
+                'What inspires you today?',
+                'What's your biggest achievement?',
+                'What's your favorite memory?',
+                'What's your dream vacation?',
+                'What's your go-to comfort food?'
+            ],
+            announcement: [
+                'We're launching our new product line!',
+                'Join us for our upcoming webinar!',
+                'We're hiring! Check out our open positions.',
+                'New partnership announcement coming soon!',
+                'Major milestone achieved!'
+            ],
+            promotion: [
+                'Get 20% off on all products!',
+                'Free shipping on orders over $50!',
+                'Buy one, get one free!',
+                'Early bird special: 30% off!',
+                'Limited edition items available now!'
+            ],
+            story: [
+                'How we started our journey...',
+                'Meet our amazing team!',
+                'A day in our office...',
+                'Our latest project highlights...',
+                'Customer success stories...'
+            ]
+        };
+
+        // Event listeners
+        templateCards.forEach(card => {
+            card.addEventListener('click', () => {
+                templateCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedTemplate = card.dataset.template;
+                updateSuggestions();
+            });
+        });
+
+        platformSelect.addEventListener('change', () => {
+            if (selectedTemplate) {
+                updateSuggestions();
+            }
+        });
+
+        generateBtn.addEventListener('click', generatePost);
+
+        copyBtn.addEventListener('click', () => {
+            postPreview.select();
+            document.execCommand('copy');
+            showSuccess('Post copied to clipboard!');
+        });
+
+        function updateSuggestions() {
+            suggestions.innerHTML = '';
+            const category = selectedTemplate;
+            const items = contentSuggestions[category];
+
+            items.forEach(item => {
+                const chip = document.createElement('span');
+                chip.className = 'suggestion-chip';
+                chip.textContent = item;
+                chip.addEventListener('click', () => {
+                    generatePost(item);
+                });
+                suggestions.appendChild(chip);
+            });
+        }
+
+        function generatePost(suggestion = null) {
+            if (!selectedTemplate) {
+                showError('Please select a template first');
+                return;
+            }
+
+            loading.classList.add('show');
+            generateBtn.disabled = true;
+
+            setTimeout(() => {
+                const platform = platformSelect.value;
+                const template = templates[selectedTemplate][platform];
+                const randomTemplate = template[Math.floor(Math.random() * template.length)];
+                
+                let content = randomTemplate;
+                if (suggestion) {
+                    content = content.replace(`{${selectedTemplate}}`, suggestion);
+                } else {
+                    const items = contentSuggestions[selectedTemplate];
+                    const randomItem = items[Math.floor(Math.random() * items.length)];
+                    content = content.replace(`{${selectedTemplate}}`, randomItem);
+                }
+
+                postPreview.value = content;
+                loading.classList.remove('show');
+                generateBtn.disabled = false;
+            }, 500);
+        }
+    </script>
+</body>
+</html> 
